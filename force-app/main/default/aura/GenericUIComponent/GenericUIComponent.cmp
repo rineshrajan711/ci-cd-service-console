@@ -1,0 +1,103 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" controller="UIElementDataController" access="global" >
+    
+    <!-- attributes -->
+    <aura:attribute name="uiComponentName" type="String" />
+    <aura:attribute name="theMap" type="Map" default="{}"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="uiIcon" type="String"/>
+    <aura:attribute name="errorMessage" type="String"/>
+    <aura:attribute name="dataCount" type="Integer"/>
+    <aura:attribute name="formatVal" type="String" default=""/>
+    <aura:attribute name="apexResultSuccess" type="Boolean" default="false"/>
+    
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    
+    <!-- the container element determine the height of the datatable -->
+    <aura:if isTrue="{!v.apexResultSuccess}">
+        <aura:if isTrue="{!v.formatVal == 'Tabular'}">
+            <lightning:card title="{!v.uiComponentName}" iconName="{!v.uiIcon}" class="slds-p-around_medium" >
+                <lightning:datatable
+                                     keyField="id"
+                                     data="{! v.data }"
+                                     columns="{! v.columns }"
+                                     hideCheckboxColumn="true"/>
+            </lightning:card>     
+        </aura:if>
+        <aura:if isTrue="{!v.formatVal == 'Detailed'}">
+            <article class="slds-card">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container" title="{!v.uiComponentName}"> <!-- Add the dynamic field from metadata to here -->
+                                <lightning:icon iconName="{!v.uiIcon}" alternativeText="Product" title="Product" />
+                                <span class="slds-assistive-text">{!v.uiComponentName}</span>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title">
+                                <a href="#" class="slds-card__header-link slds-truncate" title="{!(v.uiComponentName + '(' + v.dataCount + ')')}">
+                                    <span>{!v.uiComponentName} ({!v.dataCount})</span>
+                                </a>
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner">
+                    <ul class="slds-grid slds-wrap slds-grid_pull-padded">
+                        <aura:iteration items="{!v.data}" var="singleData">
+                            <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-2">
+                                <article class="slds-tile slds-media slds-card__tile slds-hint-parent">
+                                    <div class="slds-media__figure">
+                                        <span class="slds-icon_container" title="Description of icon when needed" aura:id="iconTab" > <!-- Add the dynamic field from metadata to here -->
+                                            <lightning:icon iconName="{!v.uiIcon}" alternativeText="{!v.uiComponentName}" title="{!v.uiComponentName}" />
+                                            <span class="slds-assistive-text">{!v.uiComponentName}</span>
+                                        </span>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-grid_align-spread slds-has-flexi-truncate">
+                                            <h3 class="slds-tile__title slds-truncate" title="Related Record Title 1">
+                                                <a href="#">{!singleData.Name}</a>
+                                            </h3>
+                                            <div class="slds-shrink-none">
+                                            </div>
+                                        </div>
+                                        <div class="slds-tile__detail">
+                                            <dl class="slds-list_horizontal slds-wrap">
+                                                <aura:iteration items="{!v.columns}" var="columnValue">
+                                                    <dt class="slds-item_label slds-text-color_weak slds-truncate" title="First Label"> {!columnValue.label}</dt>
+                                                    <dd class="slds-item_detail slds-truncate" title="Description for first label"><c:GenericUIFieldSplitter record="{!singleData}" fieldName="{!columnValue.fieldName}" /></dd>
+                                                </aura:iteration>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </article>
+                            </li>
+                        </aura:iteration>
+                    </ul>
+                </div>
+                <footer class="slds-card__footer">
+                </footer>
+            </article>
+        </aura:if> 
+        <aura:if isTrue="{!v.formatVal == 'Error Message'}">
+            <div class="slds-notify slds-notify_toast slds-theme_error">
+                <span class="slds-assistive-text">ERROR</span>
+                <div class="slds-notify__content">
+                    <h5 class="slds-text-heading_small slds-align_absolute-center">Error Message </h5>
+                    <br/>
+                    <p class="slds-align_absolute-center">{!v.errorMessage}</p>                
+                </div>
+            </div>
+        </aura:if>
+        <aura:set attribute="else">
+            <div style="height: 300px">
+                <div class="exampleHolder">
+                    <lightning:spinner alternativeText="Loading" size="large" />
+                </div>
+            </div>
+        </aura:set>
+    </aura:if>
+    
+</aura:component>

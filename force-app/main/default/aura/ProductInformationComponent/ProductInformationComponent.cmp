@@ -1,0 +1,18 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    
+    <aura:attribute name="caseRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    <aura:attribute name="dataFetchComplete" type="Boolean" default="false"/>
+    <aura:attribute name="theMapValue" type="Map" default="{}"/>
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="CaseNumber,Subject,Contact.Product__c,Contact.Home_Country__c"
+                      targetFields="{!v.caseRecord}"
+                      targetError="{!v.recordLoadError}"
+                      recordUpdated="{!c.recordUpdate}" 
+                      />
+    
+    <aura:if isTrue="{!v.dataFetchComplete}">
+        <c:GenericUIComponent uiComponentName= "Product Information" theMap="{!v.theMapValue}"/>
+    </aura:if>
+</aura:component>
